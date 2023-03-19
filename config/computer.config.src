@@ -5,20 +5,13 @@
 
 {kernel, [
     {distributed, [{hera_synchronization, 0, [{
-        sensor_fusion@sonar_1,
-        sensor_fusion@sonar_2,
-        sensor_fusion@sonar_3
     }]}]},
 
     {sync_nodes_mandatory, []},
 
     {sync_nodes_optional, [
         sensor_fusion@sebastien,
-        sensor_fusion@sonar_1,
-        sensor_fusion@sonar_2,
-        sensor_fusion@sonar_3,
-        sensor_fusion@nav_1,
-        sensor_fusion@nav_2
+        sensor_fusion@nav_1
     ]},
 
     {sync_nodes_timeout, 5000},
@@ -32,7 +25,7 @@
         {i2c , grisp_emulation_i2c_drv}
     ]} ,
     {devices , [
-        %{spi1 , pmod_nav}
+        %{spi2 , pmod_nav}
     ]}
 ]}
 ].

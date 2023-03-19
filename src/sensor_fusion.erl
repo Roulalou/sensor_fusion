@@ -84,7 +84,7 @@ start(_Type, _Args) ->
     init_table(),
     case node_type() of
         nav ->
-            _ = grisp:add_device(spi1, pmod_nav);
+            _ = grisp:add_device(spi2, pmod_nav);
         sonar ->
             _ = grisp:add_device(uart, pmod_maxsonar),
             pmod_maxsonar:set_mode(single);
