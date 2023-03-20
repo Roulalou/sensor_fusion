@@ -1,14 +1,9 @@
 -module(miniCluster).
 
 % -compile(export_all).
--define(DATASET, [{1,8}, {1,9}, {2,9}, {8,1}, {9,1}, {9,2}]).
+-define(DATASET, [{1,8}, {1,9}, {2,9}, {8,1}, {9,1}, {9,2}, {2,5}, {6,4}]).
 -define(MAX, 10).
--export([km/0]).
-
-
-% init() ->
-%     Var = lists:nthtail(14, atom_to_list(node())),
-%     io:format("Var : ~p~n", [Var]).
+-export([km/0, kmean/2]).
 
 km() ->
     kmean(?DATASET, 2).
