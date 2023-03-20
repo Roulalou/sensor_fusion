@@ -2,6 +2,7 @@
 
 % -compile(export_all).
 -define(DATASET, [{1,8}, {1,9}, {2,9}, {8,1}, {9,1}, {9,2}]).
+-define(MAX, 10).
 -export([km/0]).
 
 
@@ -12,21 +13,24 @@
 km() ->
     kmean(?DATASET, 2).
 
-kmean(Dataset, K) ->
+kmean(Dataset, K) -> % First occurence
     io:format("Dataset : ~p~n", [Dataset]),
     Centroids = random_centroids(Dataset, K),
     io:format("Initial Centroid : ~p~n", [Centroids]),
+    kmean_loop(Dataset, Centroids, 0).
+
+kmean_loop(Dataset, Centroids, Occurence) ->
     Clusters = assign_clusters(Dataset, Centroids),
-    io:format("Clusters : ~p~n", [Clusters]).
-    % New_centroids = compute_centroids(Clusters).
-    % repeat
-    %     clusters = assign_clusters(dataset, centroids),
-    %     new_centroids = compute_centroids(clusters),
-    %     if
-    %         centroids == new_centroids -> clusters;
-    %         true -> kmean(dataset, k)
-    %     end
-    % end.
+    io:format("Clusters : ~p~n", [Clusters]),
+    New_centroids = compute_centroids(Clusters),
+    io:format("New Centroid : ~p~n", [New_centroids]),
+    Sorted_centroids = lists:sort(Centroids), % Sort the centroids because == donn't work if element aren't at the same place
+    Sorted_new_centroids = lists:sort(New_centroids),
+    if 
+        Sorted_centroids == Sorted_new_centroids -> Clusters; % If the centroids are the same, return the clusters
+        Occurence >= ?MAX -> Clusters; % If the number of occurence is greater than MAX, return the clusters
+        true -> kmean_loop(Dataset, New_centroids, Occurence + 1) % Else, repeat the process
+    end.
     
 random_centroids(Dataset, K) ->
     random_centroids(Dataset, K, []).
@@ -51,7 +55,7 @@ assign_clusters(Dataset, Centroid, Clusters) ->
         [] -> Clusters; % Parse through the whole Dataset : return clusters
         [H|T] ->
             Closest = closest_centroid(H, Centroid),
-            io:format("Clusters : ~p~n", [Clusters]),
+            % io:format("Clusters : ~p~n", [Clusters]),
             Actual_point = lists:nth(Closest, Clusters),
             New__actual_point = [H | Actual_point],
             New_clusters = replace_nth_element(Closest, New__actual_point, Clusters),
@@ -82,3 +86,19 @@ replace_nth_element(N, Value, [H | T]) when N > 1 ->
     [H | replace_nth_element(N-1, Value, T)];
 replace_nth_element(_, _, []) ->
     [].
+
+compute_centroids(Clusters) ->
+    compute_centroids(Clusters, []).
+
+compute_centroids(Clusters, New_centroids) ->
+    case Clusters of
+        [] -> New_centroids;
+        [H|T] -> % H is a cluster
+            New_centroid = compute_centroid(H),
+            compute_centroids(T, [New_centroid | New_centroids])
+    end.
+
+compute_centroid(Cluster) ->
+    X = lists:sum([X || {X, _} <- Cluster]) / length(Cluster),
+    Y = lists:sum([Y || {_, Y} <- Cluster]) / length(Cluster),
+    {X, Y}.
