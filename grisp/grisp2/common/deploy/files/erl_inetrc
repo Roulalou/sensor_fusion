@@ -4,9 +4,8 @@
 % {host, {X,X,X,X}, ["hostname_computer"]}.
 % {host, {X,X,X,X}, ["nav_1"]}.
 % {host, {X,X,X,X}, ["sonar_1"]}.
-{host, {192,168,2,13}, ["sebastien"]}.
-% {host, {192.168.1.69}, ["sebastien"]}.
-{host, {192,168,2,14}, ["nav_1"]}.
+{host, {192,168,1,33}, ["sebastien"]}.
+{host, {192,168,1,62}, ["nav_1"]}.
 
 % Do not monitor the hosts file
 {hosts_file, ""}.
