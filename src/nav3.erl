@@ -31,8 +31,8 @@ calibrate() ->
 init(C) ->
     Spec = #{
         name => ?MODULE,
-        iter => infinity,
-        timeout => 100
+        iter => 1000,
+        timeout => 1
     },
     {ok, C, Spec}.
 

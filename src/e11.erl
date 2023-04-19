@@ -27,7 +27,7 @@ init(R0) ->
     Spec = #{
         name => ?MODULE,
         iter => 1000,
-        timeout => 10
+        timeout => 1
     },
     X = [[1],[0],[0],[0]],
     P = mat:diag([10,10,10,10]),
@@ -36,7 +36,7 @@ init(R0) ->
 
 
 measure({T0, X0, P0, R0}) ->
-    DataNav = hera_data:get(nav3, sensor_fusion@nav_2),
+    DataNav = hera_data:get(nav3, sensor_fusion@nav_1),
     T1 = hera:timestamp(),
     Nav = [Data || {_,_,Ts,Data} <- DataNav, T0 < Ts, T1-Ts < 500],
     if
