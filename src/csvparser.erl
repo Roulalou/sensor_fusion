@@ -1,40 +1,33 @@
 -module(csvparser).
 
--export([parse/0, parse/1, print_list/1]).
+-export([parse/1, print_list/1]).
 
-parse() ->
-    Lines = parser("../measures/AFTERe11_sensor_fusion@nav_1.csv"),
-    CL = clean_lines(Lines),
-    % print_list(CL),
-    CL.
-
+% CSV : "../measures/AFTERe11_sensor_fusion@nav_1.csv"
+% return a list of the 4th column
 parse(CSV) ->
     Lines = parser(CSV),
     CL = clean_lines(Lines),
     % print_list(CL),
     CL.
 
+% return a list of the lines
 parser(CSV) ->
-    % {ok, File} = file:open("../measures/AFTERe11_sensor_fusion@nav_1.csv", [read]),
     {_, Data} = file:read_file(CSV),
-    % file:close(File),
-    % io:format("Data : ~p~n", [Data]),
-    % Data.
-    % io:format("Data : ~p~n", [Data]),
     Rows = string:tokens(binary_to_list(Data), "\n"),
     Records = [string:tokens(Row, ",") || Row <- Rows],
     % print_list(Records).
     Records.
 
+% Useful for debugging, print a list
 print_list([H|T]) ->
     io:format("H : ~p~n", [H]),
     print_list(T);
 print_list([]) ->
     ok.
 
+% return a list of the 4th column
 clean_lines(List) ->
     clean_lines(List, []).
-
 clean_lines(List, AccX) ->
     case List of 
         [] -> AccX;

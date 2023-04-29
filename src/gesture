@@ -1,1 +1,3 @@
-[test,["neg","zero","pos"]]
+[test,neg,zero,pos]
+[droite,zero,pos,zero]
+[gauche,zero,neg,zero]
