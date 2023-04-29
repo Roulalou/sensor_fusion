@@ -1,15 +1,16 @@
 -module(learn).
 
--export([main/0]).
--import(csvparser, [parse/0,  print_list/1]).
+-export([to_file/1, learn/2]).
+-import(csvparser, [parse/0, parse/1,  print_list/1]).
 
-main() ->
-    Vector = parse(),
+% CSV : "../measures/AFTERe11_sensor_fusion@nav_1.csv"
+learn(CSV, Name) ->
+    Vector = parse(CSV),
     Pattern = analyze(Vector),
     % print_list(Pattern),
     Flow = regroup(Pattern),
-    print_list(Flow).
-
+    Gesture = lists:append([Name], [Flow]),
+    to_file(Gesture).
 
 analyze(Vector) ->
     analyze(Vector, []).
@@ -18,9 +19,12 @@ analyze(Vector, Pattern) ->
     case Vector of
         [] -> Pattern;
         [H|T] ->
-            if H < -1 ->
+            % Rules of patterns
+            {Int_H, _} = string:to_integer(H),
+            % io:format("Int_H : ~p~n", [Int_H]),
+            if Int_H < -1 ->
                 analyze(T, lists:append(Pattern, ["neg"]));
-            H > 1 ->
+            Int_H > 1 ->
                 analyze(T, lists:append(Pattern, ["pos"]));
             true ->
                 analyze(T, lists:append(Pattern, ["zero"]))
@@ -47,4 +51,5 @@ regroup(Pattern, Flow) ->
             end
     end.
 
-    
+to_file(Gesture) ->
+    file:write_file("gesture", io_lib:fwrite("~p\n", [Gesture]), [append]).

@@ -1,16 +1,22 @@
 -module(csvparser).
 
--export([parse/0, print_list/1]).
+-export([parse/0, parse/1, print_list/1]).
 
 parse() ->
-    Lines = parser(),
+    Lines = parser("../measures/AFTERe11_sensor_fusion@nav_1.csv"),
     CL = clean_lines(Lines),
     % print_list(CL),
     CL.
 
-parser() ->
+parse(CSV) ->
+    Lines = parser(CSV),
+    CL = clean_lines(Lines),
+    % print_list(CL),
+    CL.
+
+parser(CSV) ->
     % {ok, File} = file:open("../measures/AFTERe11_sensor_fusion@nav_1.csv", [read]),
-    {_, Data} = file:read_file("../measures/AFTERe11_sensor_fusion@nav_1.csv"),
+    {_, Data} = file:read_file(CSV),
     % file:close(File),
     % io:format("Data : ~p~n", [Data]),
     % Data.
