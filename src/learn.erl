@@ -1,6 +1,6 @@
 -module(learn).
 
--export([to_file/1, learn/2, analyze/1, regroup/1]).
+-export([to_file/1, learn/2, analyze/1, regroup/1, average/1]).
 -import(csvparser, [parse/2,  print_list/1]). % peut aussi csvparser:parse(..) au lieu d'import
 -define(AXIS, [x, y, z]).
 -define(AV_SIZE, 10).
@@ -94,7 +94,7 @@ calculate_av(List) ->
 calculate_av(List, Neg, Pos, Zero) ->
     case List of
         [] -> 
-            io:format("Neg : ~p, Pos : ~p, Zero : ~p~n", [Neg, Pos, Zero]),
+            % io:format("Neg : ~p, Pos : ~p, Zero : ~p~n", [Neg, Pos, Zero]),
             if Neg > Pos, Neg > Zero ->
                 neg;
             Pos > Neg, Pos > Zero ->
