@@ -1,12 +1,13 @@
 -module(csvparser).
 
--export([parse/1, print_list/1]).
+-export([parse/2, print_list/1]).
 
 % CSV : "../measures/AFTERe11_sensor_fusion@nav_1.csv"
-% return a list of the 4th column
-parse(CSV) ->
+% return a list of the column Index
+% For nav_3 acceleration are in 5, 8, 11
+parse(CSV, Index) ->
     Lines = parser(CSV),
-    CL = clean_lines(Lines),
+    CL = clean_lines(Lines, Index),
     % print_list(CL),
     CL.
 
@@ -25,14 +26,14 @@ print_list([H|T]) ->
 print_list([]) ->
     ok.
 
-% return a list of the 4th column
-clean_lines(List) ->
-    clean_lines(List, []).
-clean_lines(List, AccX) ->
+% return a list of the column Index
+clean_lines(List, Index) ->
+    clean_lines(List, Index, []).
+clean_lines(List, Index, AccX) ->
     case List of 
         [] -> AccX;
         [H|T] ->
-            Just_AccX_H  = lists:nth(3, H),
+            Just_AccX_H  = lists:nth(Index, H),
             New_H = lists:append(AccX, [Just_AccX_H]),
-            clean_lines(T, New_H)
+            clean_lines(T, Index, New_H)
     end.
