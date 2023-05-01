@@ -2,7 +2,7 @@
 
 -export([parse/2, print_list/1]).
 
-% CSV : "../measures/AFTERe11_sensor_fusion@nav_1.csv"
+% CSV : "../measures/Anav3_sensor_fusion@nav_1.csv"
 % return a list of the column Index
 % For nav_3 acceleration are in 5, 8, 11
 parse(CSV, Index) ->

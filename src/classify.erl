@@ -17,7 +17,7 @@ classify_new_gesture(CSV) ->
     io:format("Name : ~p, with Acc : ~p~n", [Name, Accuracy]).
 
     
-
+% import the gesture file to a list of gesture
 import_gesture() ->
     {_, Data} = file:read_file("gesture"),
     Gestures = string:tokens(binary_to_list(Data), "\n"),
