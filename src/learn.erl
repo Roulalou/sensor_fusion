@@ -18,11 +18,11 @@ learn(CSV, Name) ->
 learn_axis(CSV, Name, Axis) ->
     case Axis of
         x ->
-            Index = 5;
+            Index = 3;
         y ->
-            Index = 8;
+            Index = 4;
         z ->
-            Index = 11
+            Index = 5
     end,
     Vector = parse(CSV, Index),
     Pattern = analyze(Vector),

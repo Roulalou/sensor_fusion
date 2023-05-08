@@ -8,17 +8,17 @@
 classify_new_gesture(CSV) ->
     List_gestures = import_gesture(),
 
-    VectorX = parse(CSV, 5), % 5 is the index of the x axis acceleration
+    VectorX = parse(CSV, 3), % 3 is the index of the x axis acceleration
     PatternX = analyze(VectorX),
     Clean_PatX = average(PatternX),
     NewX = regroup(Clean_PatX), % New is the general flow of the new gesture
 
-    VectorY = parse(CSV, 8), % 8 is the index of the y axis acceleration
+    VectorY = parse(CSV, 4), % 4 is the index of the y axis acceleration
     PatternY = analyze(VectorY),
     Clean_PatY = average(PatternY),
     NewY = regroup(Clean_PatY), % New is the general flow of the new gesture
 
-    VectorZ = parse(CSV, 11), % 11 is the index of the z axis acceleration
+    VectorZ = parse(CSV, 5), % 5 is the index of the z axis acceleration
     PatternZ = analyze(VectorZ),
     Clean_PatZ = average(PatternZ),
     NewZ = regroup(Clean_PatZ), % New is the general flow of the new gesture
@@ -52,8 +52,9 @@ compare_gesture(NewX, NewY, NewZ, List_gestures, Name, Accuracy) ->
         [H|T] ->
             % Take the 3 next list of flow, to have the 3 axis
             [GName|_] = H, % GName = Gesture Name
-            io:format("HACHE : ~p~n", [H]),
+            % io:format("HEAD : ~p~n", [H]),
             TriList = lists:sublist([H|T], 3),
+            io:format("N : ~p, ", [GName]),
             New_Accuracy = tri_compare(NewX, NewY, NewZ, TriList),
             Next_G = lists:sublist([H|T], 4, length([H|T])), % remove the 3 axis for the gesture compared
             if New_Accuracy > Accuracy ->
@@ -67,7 +68,6 @@ compare_gesture(NewX, NewY, NewZ, List_gestures, Name, Accuracy) ->
 tri_compare(NewX, NewY, NewZ, TriList) ->
     GXT = lists:nth(1, TriList), % Gesture X Axis, with TOO MUCH variables
     GX = lists:sublist(GXT, 3, length(GXT)),
-    io:format("GX : ~p~n", [GX]),
     GYT = lists:nth(2, TriList),
     GY = lists:sublist(GYT, 3, length(GYT)),
     GZT = lists:nth(3, TriList),
@@ -75,6 +75,7 @@ tri_compare(NewX, NewY, NewZ, TriList) ->
     Acc_X = direct_compare(NewX, GX),
     Acc_Y = direct_compare(NewY, GY),
     Acc_Z = direct_compare(NewZ, GZ),
+    io:format("X : ~p, Y : ~p, Z : ~p~n", [Acc_X, Acc_X, Acc_Z]),
     Acc = (Acc_X + Acc_Y + Acc_Z) / 3, % Average over the 3 axis
     Acc.
 
@@ -85,13 +86,15 @@ direct_compare(New, Gesture) ->
 direct_compare(New, Gesture, Okay, Comparison) ->
     % For the moment not very opti, we look if a list is empty and then we return the accuracy
 
-    io:format("Ok : ~p, Comp : ~p~n", [Okay, Comparison]),
 
     if New == [] ->
-        Okay/Comparison;
+        % io:format("Ok : ~p, Comp : ~p~n", [Okay, Comparison]),
+        Total_Comp = finish_list(Gesture, 0) + Comparison,
+        Okay/Total_Comp;
     true ->
         if Gesture == [] ->
-            Okay/Comparison;
+            Total_Comp = finish_list(New, 0) + Comparison,
+            Okay/Total_Comp;
         true ->
             [NH|NT] = New,
             [GH|GT] = Gesture,
@@ -103,3 +106,9 @@ direct_compare(New, Gesture, Okay, Comparison) ->
         end
     end.
 
+% Count the number of element in a list
+finish_list(List, N) ->
+    case List of
+        [] -> N;
+        [_|T] -> finish_list(T, N+1)
+    end.
