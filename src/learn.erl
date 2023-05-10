@@ -5,8 +5,8 @@
 -define(AXIS, [x, y, z]).
 -define(AV_SIZE, 10).
 
-% CSV : "../measures/Anav3_sensor_fusion@nav_1.csv"
-% example : learn:learn("../measures/Anav3_sensor_fusion@nav_1.csv", test).
+% CSV : "../measures/bf1.csv"
+% example : learn:learn("../measures/bf1.csv", test).
 % add a new gesture to the gesture file
 learn(CSV, Name) ->
     % learn for the 3 axis

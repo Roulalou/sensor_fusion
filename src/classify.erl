@@ -4,7 +4,7 @@
 -import(learn, [analyze/1, regroup/1, average/1]).
 -export([import_gesture/0, classify_new_gesture/1]).
 
-% CSV : "../measures/Anav3_sensor_fusion@nav_1.csv"
+% CSV : "../measures/hc1.csv"
 classify_new_gesture(CSV) ->
     List_gestures = import_gesture(),
 

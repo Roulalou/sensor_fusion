@@ -8,11 +8,7 @@
 parse(CSV, Index) ->
     Lines = parser(CSV),
     CL = clean_lines(Lines, Index),
-    if Index == 5 -> % HARDCODE for Z acceleration for nav3
-        z_accel_norm(CL);
-    true ->
-        CL
-    end.
+    CL.
 
 % return a list of the lines
 parser(CSV) ->
@@ -39,18 +35,4 @@ clean_lines(List, Index, AccX) ->
             Just_AccX_H  = lists:nth(Index, H),
             New_H = lists:append(AccX, [Just_AccX_H]),
             clean_lines(T, Index, New_H)
-    end.
-
-% add 9,81 to each value of the Z axis, to counter gravity
-z_accel_norm(List) ->
-    z_accel_norm(List, []).
-
-z_accel_norm(List, Cleaned) ->
-    case List of
-        [] -> Cleaned;
-        [H|T] ->
-            {Int_H, _} = string:to_float(H),
-            New_H = Int_H + 9.81,
-            New_Cleaned = lists:append(Cleaned, [New_H]),
-            z_accel_norm(T, New_Cleaned)
     end.
