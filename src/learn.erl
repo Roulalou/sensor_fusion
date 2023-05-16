@@ -3,7 +3,7 @@
 -export([to_file/1, learn/2, analyze/1, regroup/1, average/1]).
 -import(csvparser, [parse/2,  print_list/1]). % peut aussi csvparser:parse(..) au lieu d'import
 -define(AXIS, [x, y, z]).
--define(AV_SIZE, 10).
+-define(AV_SIZE, 100).
 
 % CSV : "../measures/bf1.csv"
 % example : learn:learn("../measures/bf1.csv", test).
@@ -43,12 +43,16 @@ analyze(Vector, Pattern) ->
             % io:format("Int_H : ~p~n", [Int_H]),
 
             % It is arbitrary values
-            if Int_H < -2 ->
-                analyze(T, lists:append(Pattern, [neg]));
-            Int_H > 2 ->
-                analyze(T, lists:append(Pattern, [pos]));
+            if Int_H < -6 ->
+                analyze(T, lists:append(Pattern, [nn])); % nn : negative high
+            Int_H < -3 ->
+                analyze(T, lists:append(Pattern, [n])); % n : negative low
+            Int_H > 6 ->
+                analyze(T, lists:append(Pattern, [pp])); % pp : positive high
+            Int_H > 3 ->
+                analyze(T, lists:append(Pattern, [p])); % p : positive low
             true ->
-                analyze(T, lists:append(Pattern, [zero]))
+                analyze(T, lists:append(Pattern, [o])) % o : zero
             end
     end.
 
@@ -88,25 +92,31 @@ average(List, Size, New_L) ->
     end.
 
 
-% hardcoded for :  neg, pos, zero
+% hardcoded for :  nn, n, pp, p, zero
 calculate_av(List) ->
-    calculate_av(List, 0, 0, 0).
-calculate_av(List, Neg, Pos, Zero) ->
+    calculate_av(List, 0, 0, 0, 0, 0).
+calculate_av(List, NegH, NegL, PosH, PosL, Zero) ->
     case List of
         [] -> 
             % io:format("Neg : ~p, Pos : ~p, Zero : ~p~n", [Neg, Pos, Zero]),
-            if Neg > Pos, Neg > Zero ->
-                neg;
-            Pos > Neg, Pos > Zero ->
-                pos;
+            if NegL > NegH, NegL > PosH, NegL > PosL, NegL > Zero ->
+                n;
+            PosL > NegH, PosL > PosH, PosL > NegL, PosL > Zero ->
+                p;
+            NegH > NegL, NegH > PosH, NegH > PosL, NegH > Zero ->
+                nn;
+            PosH > NegH, PosH > NegL, PosH > PosL, PosH > Zero ->
+                pp;
             true ->
-                zero
+                o
             end;
         [H|T] ->
             case H of
-                neg -> calculate_av(T, Neg + 1, Pos, Zero);
-                pos -> calculate_av(T, Neg, Pos + 1, Zero);
-                zero -> calculate_av(T, Neg, Pos, Zero + 1)
+                nn -> calculate_av(T, NegH + 1, NegL, PosH, PosL, Zero);
+                n -> calculate_av(T, NegH, NegL + 1, PosH, PosL, Zero);
+                pp -> calculate_av(T, NegH, NegL, PosH + 1, PosL, Zero);
+                p -> calculate_av(T, NegH, NegL, PosH, PosL + 1, Zero);
+                o -> calculate_av(T, NegH, NegL, PosH, PosL, Zero + 1)
             end
     end.
 
