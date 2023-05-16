@@ -12,7 +12,7 @@ def do_math():
     print(av)
 
 def plot(min, max):
-    df = pd.read_csv('measures/hcnew.csv')
+    df = pd.read_csv('measures/rot0.csv')
     last_three_columns = df.iloc[:, min:max]
     index = df.iloc[:, 0]
     
@@ -26,5 +26,5 @@ def plot(min, max):
     plt.show()
 
 plot(2, 5)
-plot(5, 8)
-plot(8, 11)
+# plot(5, 8)
+# plot(8, 11)

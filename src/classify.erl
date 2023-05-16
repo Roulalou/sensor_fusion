@@ -54,7 +54,7 @@ compare_gesture(NewX, NewY, NewZ, List_gestures, Name, Accuracy) ->
             [GName|_] = H, % GName = Gesture Name
             % io:format("HEAD : ~p~n", [H]),
             TriList = lists:sublist([H|T], 3),
-            io:format("N : ~p, ", [GName]),
+            io:format("N : ~p~n", [GName]),
             New_Accuracy = tri_compare(NewX, NewY, NewZ, TriList),
             Next_G = lists:sublist([H|T], 4, length([H|T])), % remove the 3 axis for the gesture compared
             if New_Accuracy > Accuracy ->
@@ -75,7 +75,7 @@ tri_compare(NewX, NewY, NewZ, TriList) ->
     Acc_X = direct_compare(NewX, GX),
     Acc_Y = direct_compare(NewY, GY),
     Acc_Z = direct_compare(NewZ, GZ),
-    io:format("X : ~p, Y : ~p, Z : ~p~n", [Acc_X, Acc_X, Acc_Z]),
+    io:format("X : ~p, Y : ~p, Z : ~p~n", [Acc_X, Acc_Y, Acc_Z]),
     Acc = (Acc_X + Acc_Y + Acc_Z) / 3, % Average over the 3 axis
     Acc.
 
@@ -88,12 +88,13 @@ direct_compare(New, Gesture, Okay, Comparison) ->
 
 
     if New == [] ->
-        % io:format("Ok : ~p, Comp : ~p~n", [Okay, Comparison]),
         Total_Comp = finish_list(Gesture, 0) + Comparison,
+        % io:format("NOk : ~p, Comp : ~p~n", [Okay, Total_Comp]),
         Okay/Total_Comp;
     true ->
         if Gesture == [] ->
             Total_Comp = finish_list(New, 0) + Comparison,
+            % io:format("GOk : ~p, Comp : ~p~n", [Okay, Total_Comp]),
             Okay/Total_Comp;
         true ->
             [NH|NT] = New,
