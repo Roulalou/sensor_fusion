@@ -81,7 +81,7 @@ realtime() ->
 
 realtime(Time) ->
     io:format("Start Realtime~n",[]),
-    realtime:start(Time * 100).
+    realtime:start(Time * 1000).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Callbacks

@@ -1,13 +1,20 @@
 -module(csvparser).
 
--export([parse/2, print_list/1]).
+-export([parse_CSV/2, parse/2, print_list/1]).
 
 % CSV : "../measures/Anav3_sensor_fusion@nav_1.csv"
 % return a list of the column Index
 % For nav_3 acceleration are in 3, 4, 5
-parse(CSV, Index) ->
+parse_CSV(CSV, Index) ->
     Lines = parser(CSV),
     CL = clean_lines(Lines, Index),
+    CL.
+
+% Used by realtime.erl
+% return a list of the column Index
+% For nav_3 acceleration are in 1, 2, 3
+parse(List, Index) ->
+    CL = clean_lines(List, Index),
     CL.
 
 % return a list of the lines

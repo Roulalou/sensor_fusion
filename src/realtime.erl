@@ -10,12 +10,24 @@ start(Maxtime) ->
     collect_data_over_time(StartTime + Maxtime).
 
 collect_data_over_time(Maxtime) ->
-    [{_, _,Time, Data}] = hera_data:get(nav3, sensor_fusion@nav_1),
-    io:format("~p~n", [Data]),
+    collect_data_over_time(Maxtime, [], 0).
+
+collect_data_over_time(Maxtime, List, LastT) ->
+    [{_, _,Time, Data}] = hera_data:get(nav3, sensor_fusion@nav_1), %[{_, _,Time, Data}]
+    % io:format("~p~n", [Time]),
+
     if Time > Maxtime ->
-        io:format("Done!~n");
+        % io:format("List: ~p~n", [List]),
+        io:format("Done!~nCalculating...~n"),
+        classify:classify_new_gesture(List);
     true ->
-        collect_data_over_time(Maxtime)
+        if Time == LastT ->
+            % io:format("Same time! : ~p~n", [Time]),
+            collect_data_over_time(Maxtime, List, Time);
+        true ->
+            NewList = lists:append(List, [Data]),
+            collect_data_over_time(Maxtime, NewList, Time)
+        end
     end.
 
 countdown(Count) ->
