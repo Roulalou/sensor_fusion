@@ -1,9 +1,9 @@
 -module(learn).
 
--export([to_file/1, learn/2, analyze/1, regroup/1, average/1]).
--import(csvparser, [parse/2,  print_list/1]). % peut aussi csvparser:parse(..) au lieu d'import
+-export([to_file/1, learn/2, analyze/1, analyze_CSV/1, regroup/1, average/1, av_size/0]).
+-import(csvparser, [parse_CSV/2,  print_list/1]). % peut aussi csvparser:parse(..) au lieu d'import
 -define(AXIS, [x, y, z]).
--define(AV_SIZE, 65).
+-define(AV_SIZE, 50). % can be tuned depending on the quality of the results
 
 % CSV : "../measures/bf1.csv"
 % example : learn:learn("../measures/bf1.csv", test).
@@ -24,17 +24,45 @@ learn_axis(CSV, Name, Axis) ->
         z ->
             Index = 5
     end,
-    Vector = parse(CSV, Index),
-    Pattern = analyze(Vector),
+    Vector = parse_CSV(CSV, Index),
+    Pattern = analyze_CSV(Vector),
     Clean_Pat = average(Pattern),
     Flow = regroup(Clean_Pat),
     Gesture = lists:append([Name, Axis], Flow),
     to_file(Gesture).
 
-% analyze the list of acc and determine the pattern
+% analyze the list of acc and determine the pattern FOR REALTIME
 analyze(Vector) ->
     analyze(Vector, []).
 analyze(Vector, Pattern) ->
+    case Vector of
+        [] -> Pattern;
+        [H|T] ->
+            % Rules of patterns
+            % io:format("H : ~p~n", [H]),
+
+            % It is arbitrary values
+            if H < -7 ->
+                analyze(T, lists:append(Pattern, [nn])); % nn : negative high
+            H < -4 ->
+                analyze(T, lists:append(Pattern, [n])); % n : negative low
+            H < -2 ->
+                analyze(T, Pattern); % Guard Zone
+            H > 7 ->
+                analyze(T, lists:append(Pattern, [pp])); % pp : positive high
+            H > 4 ->
+                analyze(T, lists:append(Pattern, [p])); % p : positive low
+            H > 2 ->
+                analyze(T, Pattern); % Guard Zone
+            true ->
+                analyze(T, lists:append(Pattern, [o])) % o : zero
+            end
+    end.
+
+% analyze_CSV the list of acc and determine the pattern
+analyze_CSV(Vector) ->
+    analyze_CSV(Vector, []).
+analyze_CSV(Vector, Pattern) ->
     case Vector of
         [] -> Pattern;
         [H|T] ->
@@ -44,22 +72,21 @@ analyze(Vector, Pattern) ->
 
             % It is arbitrary values
             if Int_H < -7 ->
-                analyze(T, lists:append(Pattern, [nn])); % nn : negative high
+                analyze_CSV(T, lists:append(Pattern, [nn])); % nn : negative high
             Int_H < -4 ->
-                analyze(T, lists:append(Pattern, [n])); % n : negative low
+                analyze_CSV(T, lists:append(Pattern, [n])); % n : negative low
             Int_H < -2 ->
-                analyze(T, Pattern); % Guard Zone
+                analyze_CSV(T, Pattern); % Guard Zone
             Int_H > 7 ->
-                analyze(T, lists:append(Pattern, [pp])); % pp : positive high
+                analyze_CSV(T, lists:append(Pattern, [pp])); % pp : positive high
             Int_H > 4 ->
-                analyze(T, lists:append(Pattern, [p])); % p : positive low
+                analyze_CSV(T, lists:append(Pattern, [p])); % p : positive low
             Int_H > 2 ->
-                analyze(T, Pattern); % Guard Zone
+                analyze_CSV(T, Pattern); % Guard Zone
             true ->
-                analyze(T, lists:append(Pattern, [o])) % o : zero
+                analyze_CSV(T, lists:append(Pattern, [o])) % o : zero
             end
     end.
-
 
 % regroup the pattern to have the general flow
 regroup(Pattern) ->
@@ -127,3 +154,7 @@ calculate_av(List, NegH, NegL, PosH, PosL, Zero) ->
 % export the gesture to the file
 to_file(Gesture) ->
     file:write_file("gesture", io_lib:fwrite("~p\n", [Gesture]), [append]).
+
+% export AV_SIZE for others modules
+av_size() ->
+    ?AV_SIZE.

@@ -1,7 +1,7 @@
 -module(classify).
 
 -import(csvparser, [parse_CSV/2, parse/2, print_list/1]).
--import(learn, [analyze/1, regroup/1, average/1]).
+-import(learn, [analyze/1, analyze_CSV/1, regroup/1, average/1]).
 -export([import_gesture/0, classify_new_gesture/1, classify_new_gesture_CSV/1]).
 
 % Used by realtime.erl
@@ -12,16 +12,19 @@ classify_new_gesture(List) ->
     PatternX = analyze(VectorX),
     Clean_PatX = average(PatternX),
     NewX = regroup(Clean_PatX), % New is the general flow of the new gesture
+    io:format("NewX : ~p~n", [NewX]),
 
     VectorY = parse(List, 2), % 2 is the index of the y axis acceleration
     PatternY = analyze(VectorY),
     Clean_PatY = average(PatternY),
     NewY = regroup(Clean_PatY), % New is the general flow of the new gesture
+    io:format("NewY : ~p~n", [NewY]),
 
     VectorZ = parse(List, 3), % 3 is the index of the z axis acceleration
     PatternZ = analyze(VectorZ),
     Clean_PatZ = average(PatternZ),
     NewZ = regroup(Clean_PatZ), % New is the general flow of the new gesture
+    io:format("NewZ : ~p~n", [NewZ]),
 
     {Name, Accuracy} = compare_gesture(NewX, NewY, NewZ, List_gestures),
 
@@ -33,17 +36,17 @@ classify_new_gesture_CSV(CSV) ->
     List_gestures = import_gesture_CSV(),
 
     VectorX = parse_CSV(CSV, 3), % 3 is the index of the x axis acceleration
-    PatternX = analyze(VectorX),
+    PatternX = analyze_CSV(VectorX),
     Clean_PatX = average(PatternX),
     NewX = regroup(Clean_PatX), % New is the general flow of the new gesture
 
     VectorY = parse_CSV(CSV, 4), % 4 is the index of the y axis acceleration
-    PatternY = analyze(VectorY),
+    PatternY = analyze_CSV(VectorY),
     Clean_PatY = average(PatternY),
     NewY = regroup(Clean_PatY), % New is the general flow of the new gesture
 
     VectorZ = parse_CSV(CSV, 5), % 5 is the index of the z axis acceleration
-    PatternZ = analyze(VectorZ),
+    PatternZ = analyze_CSV(VectorZ),
     Clean_PatZ = average(PatternZ),
     NewZ = regroup(Clean_PatZ), % New is the general flow of the new gesture
 
@@ -54,9 +57,9 @@ classify_new_gesture_CSV(CSV) ->
 
 % For execution on the GRiSP board
 import_gesture() ->
-    {State, Data} = file:read_file("sensor_fusion/lib/sensor_fusion-1.0.0/src/gesture"),
-    io:format("State : ~p~n", [State]),
-    io:format("Data : ~p~n", [Data]),
+    {_, Data} = file:read_file("sensor_fusion/lib/sensor_fusion-1.0.0/src/gesture"),
+    % io:format("State : ~p~n", [State]),
+    % io:format("Data : ~p~n", [Data]),
     Gestures = string:tokens(binary_to_list(Data), "\n"),
     % print_list(Gestures),
 
