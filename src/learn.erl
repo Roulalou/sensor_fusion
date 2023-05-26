@@ -1,21 +1,46 @@
 -module(learn).
 
--export([to_file/1, learn/2, analyze/1, analyze_CSV/1, regroup/1, average/1, av_size/0]).
+-export([to_file/1, learn/2, learn_CSV/2, analyze/1, analyze_CSV/1, regroup/1, average/1, av_size/0]).
 -import(csvparser, [parse_CSV/2,  print_list/1]). % peut aussi csvparser:parse(..) au lieu d'import
 -define(AXIS, [x, y, z]).
 -define(AV_SIZE, 50). % can be tuned depending on the quality of the results
 
+% Called by realtime.erl
+% add a new gesture to the gesture file
+learn(List, Name) ->
+    % learn for the 3 axis
+    learn_axis(List, Name, lists:nth(1, ?AXIS)), %lists:nth(1, ?AXIS) = x
+    learn_axis(List, Name, lists:nth(2, ?AXIS)),
+    learn_axis(List, Name, lists:nth(3, ?AXIS)).
+
+% Called by learn() for a specific axis
+learn_axis(List, Name, Axis) ->
+    case Axis of
+        x ->
+            Index = 1;
+        y ->
+            Index = 2;
+        z ->
+            Index = 3
+    end,
+    Vector = csvparser:parse(List, Index),
+    Pattern = analyze(Vector),
+    Clean_Pat = average(Pattern),
+    Flow = regroup(Clean_Pat),
+    Gesture = lists:append([Name, Axis], Flow),
+    to_file(Gesture).
+
 % CSV : "../measures/bf1.csv"
 % example : learn:learn("../measures/bf1.csv", test).
 % add a new gesture to the gesture file
-learn(CSV, Name) ->
+learn_CSV(CSV, Name) ->
     % learn for the 3 axis
-    learn_axis(CSV, Name, lists:nth(1, ?AXIS)),
-    learn_axis(CSV, Name, lists:nth(2, ?AXIS)),
-    learn_axis(CSV, Name, lists:nth(3, ?AXIS)).
+    learn_axis_CSV(CSV, Name, lists:nth(1, ?AXIS)),
+    learn_axis_CSV(CSV, Name, lists:nth(2, ?AXIS)),
+    learn_axis_CSV(CSV, Name, lists:nth(3, ?AXIS)).
 
 % Called by learn() for a specific axis
-learn_axis(CSV, Name, Axis) ->
+learn_axis_CSV(CSV, Name, Axis) ->
     case Axis of
         x ->
             Index = 3;
@@ -29,7 +54,7 @@ learn_axis(CSV, Name, Axis) ->
     Clean_Pat = average(Pattern),
     Flow = regroup(Clean_Pat),
     Gesture = lists:append([Name, Axis], Flow),
-    to_file(Gesture).
+    to_file_CSV(Gesture).
 
 % analyze the list of acc and determine the pattern FOR REALTIME
 analyze(Vector) ->
@@ -153,6 +178,10 @@ calculate_av(List, NegH, NegL, PosH, PosL, Zero) ->
 
 % export the gesture to the file
 to_file(Gesture) ->
+    file:write_file("sensor_fusion/lib/sensor_fusion-1.0.0/src/gesture", io_lib:fwrite("~p\n", [Gesture]), [append]).
+
+% export the gesture to the file
+to_file_CSV(Gesture) ->
     file:write_file("gesture", io_lib:fwrite("~p\n", [Gesture]), [append]).
 
 % export AV_SIZE for others modules

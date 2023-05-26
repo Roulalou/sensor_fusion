@@ -9,7 +9,7 @@ start(Type, Maxtime, Period) ->
         io:format("Countdown!~n"),
         countdown(5),
         io:format("StartTime : ~p~n", [StartTime]),
-        collect_data_over_time(StartTime + Maxtime);
+        collect_data_over_time(StartTime + Maxtime + 5000); % 5000 for the countdown
     loop ->
         if Period < 0 ->
             grdos(Maxtime, Period); % Keep Period negative to loop indefinitely
@@ -18,7 +18,9 @@ start(Type, Maxtime, Period) ->
         end
     end.
 
-%%%%% For the First Method %%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% For the First Method
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 collect_data_over_time(Maxtime) ->
     collect_data_over_time(Maxtime, [], 0).
@@ -30,7 +32,8 @@ collect_data_over_time(Maxtime, List, LastT) ->
     if Time > Maxtime ->
         % io:format("List: ~p~n", [List]),
         io:format("Done!~nCalculating...~n"),
-        classify:classify_new_gesture(List);
+        classify:classify_new_gesture(List),
+        learning(List); % Call the function to ask if the user want to learn the gesture
     true ->
         if Time == LastT ->
             % io:format("Same time! : ~p~n", [Time]),
@@ -44,14 +47,32 @@ collect_data_over_time(Maxtime, List, LastT) ->
 countdown(Count) ->
     case Count of
         0 ->
-            io:format("Move!~n");
+            io:format("Start!~n");
         _ ->
             io:format("~p~n", [Count]),
             timer:sleep(1000),
             countdown(Count-1)
     end.
 
-%%%%% For the Second Method %%%%%%
+learning(List) ->
+    case io:get_line("Do you want to learn this gesture? (y/n/ENTER) : ") of
+        "y\n" ->
+            Name = io:get_line("What is the name of the gesture (use _ for space) : "),
+            RemSlash = string:strip(Name, right, $\n),
+            NameAtom = list_to_atom(RemSlash),
+            learn:learn(List, NameAtom);
+        "n\n" ->
+            io:format("No learn ");
+        "\n" ->
+            io:format("No learn ");
+        _ ->
+            io:format("Unknown~n"),
+            learning(List)
+    end.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% For the Second Method
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 grdos(Maxtime, Period) ->
     AS = learn:av_size(),
@@ -89,7 +110,7 @@ grdos(TO, Period, AS, List, SizeL, GestureList, LastT, TSM, LastX, LastY, LastZ)
                 AvgX = learn:average(PatternX),
                 AvgY = learn:average(PatternY),
                 AvgZ = learn:average(PatternZ),
-                io:format("AvX: ~p, AvY: ~p, AvZ: ~p~n", [AvgX, AvgY, AvgZ]),
+                % io:format("AvX: ~p, AvY: ~p, AvZ: ~p~n", [AvgX, AvgY, AvgZ]),
                 [HX|_] = AvgX,
                 [HY|_] = AvgY,
                 [HZ|_] = AvgZ,
