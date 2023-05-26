@@ -6,7 +6,7 @@
 -export([launch/0, launch_all/0, stop_all/0]).
 -export([update_code/2, update_code/3]).
 -export([start/2, stop/1]).
--export([realtime/0, realtime/1, realtimeOnce/0, realtimeOnce/1]).
+-export([realtime/0, realtime/2, realtimeOnce/0, realtimeOnce/1]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% API
@@ -76,20 +76,24 @@ update_code(Application, Module, Binary) ->
     c:l(Module).
 
 realtime() ->
-    io:format("Start Realtime with 3 seconds between gesture~n",[]),
-    realtime:start(loop, 3000).
+    io:format("Start Realtime with 3 seconds between gesture, during 60 seconds~n",[]),
+    realtime:start(loop, 2000, 60000).
 
-realtime(Time) ->
-    io:format("Start Realtime with ~p seconds between gesture~n",[Time]),
-    realtime:start(loop, Time * 1000).
+realtime(Time, Period) ->
+    if Period > 0 ->
+        io:format("Start Realtime with ~p seconds between gesture, during ~p seconds~n",[Time, Period]);
+    true -> 
+        io:format("Start Realtime with ~p seconds for the gesture, indefinitely~n",[Time]) % set Period to a negative number to loop indefinitely
+    end,
+    realtime:start(loop, Time * 1000, Period * 1000).
 
 realtimeOnce() ->
     io:format("Start Realtime with 10 seconds for the gesture~n",[]),
-    realtime:start(once, 10000).
+    realtime:start(once, 10000, 0). % Last argument not used
 
 realtimeOnce(Time) ->
     io:format("Start Realtime with ~p seconds for the gesture~n",[Time]),
-    realtime:start(once, Time * 1000).
+    realtime:start(once, Time * 1000, 0). % Last argument not used
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Callbacks

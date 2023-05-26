@@ -112,7 +112,7 @@ regroup(Pattern, Flow) ->
 average(List) ->
     average(List, ?AV_SIZE, []).
 average(List, Size, New_L) ->
-    if length(List) < Size ->
+    if length(List) =< Size ->
         Av = calculate_av(List),
         lists:append(New_L, [Av]); % Return the list of average
     true ->
