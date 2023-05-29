@@ -6,7 +6,7 @@
 -export([launch/0, launch_all/0, stop_all/0]).
 -export([update_code/2, update_code/3]).
 -export([start/2, stop/1]).
--export([realtime/0, realtime/2, realtime_once/0, realtime_once/1]).
+-export([realtime/0, realtime/2, realtime_once/0, realtime_once/1, clear_gesture/0]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% API
@@ -94,6 +94,10 @@ realtime_once() ->
 realtime_once(Time) ->
     io:format("Start Realtime with ~p seconds for the gesture~n",[Time]),
     realtime:start(once, Time * 1000, 0). % Last argument not used
+
+clear_gesture() ->
+    file:write_file("sensor_fusion/lib/sensor_fusion-1.0.0/src/gesture", ""),
+    io:format("Clear gesture~n",[]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Callbacks
