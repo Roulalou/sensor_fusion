@@ -31,16 +31,13 @@ collect_data_over_time(Maxtime) ->
 
 collect_data_over_time(Maxtime, List, LastT) ->
     [{_, _,Time, Data}] = hera_data:get(nav3, sensor_fusion@nav_1), %[{_, _,Time, Data}]
-    % io:format("~p~n", [Time]),
 
     if Time > Maxtime ->
-        % io:format("List: ~p~n", [List]),
         io:format("Done!~nCalculating...~n"),
         classify:classify_new_gesture(List),
         learning(List); % Call the function to ask if the user want to learn the gesture
     true ->
         if Time == LastT ->
-            % io:format("Same time! : ~p~n", [Time]),
             collect_data_over_time(Maxtime, List, Time);
         true ->
             NewList = lists:append(List, [Data]),
@@ -114,21 +111,16 @@ grdos(TO, Period, AS, List, SizeL, GestureList, LastT, TSM, LastX, LastY, LastZ)
                 AvgX = learn:average(PatternX),
                 AvgY = learn:average(PatternY),
                 AvgZ = learn:average(PatternZ),
-                % io:format("AvX: ~p, AvY: ~p, AvZ: ~p~n", [AvgX, AvgY, AvgZ]),
                 [HX|_] = AvgX,
                 [HY|_] = AvgY,
                 [HZ|_] = AvgZ,
-                % io:format("LastX: ~p =?= HX: ~p~n", [LastX, HX]),
-                % io:format("LastY: ~p =?= HY: ~p~n", [LastY, HY]),
-                % io:format("LastZ: ~p =?= HZ: ~p~n", [LastZ, HZ]),
                 if LastX == HX andalso LastY == HY andalso LastZ == HZ -> % If the last gesture is the same as the new one
                     if Time >= TSM + TO ->
-                        io:format("~n~n~n~n~n~n"), % Just to make it more readable
+                        io:format("~n~n~n~n"), % Just to make it more readable
                         io:format("Stop detected!~n"),
                         classify:classify_new_gesture(GestureList),
-                        grdos(TO, Period, AS, [], 0, [], Time, Time, LastX, LastY, LastZ); % AND IT GO AGAIN !!! indefinitely ... (for now)
+                        grdos(TO, Period, AS, [], 0, [], Time, Time, LastX, LastY, LastZ);
                     true -> % too soon, still need to wait
-                        % io:format("Too soon : ~p ms     ",[(TSM + TO) - Time]),
                         grdos(TO, Period, AS, [], 0, GestureList, Time, TSM, LastX, LastY, LastZ)
                     end;
                 true ->
@@ -136,7 +128,6 @@ grdos(TO, Period, AS, List, SizeL, GestureList, LastT, TSM, LastX, LastY, LastZ)
                     NewLastY = HY,
                     NewLastZ = HZ,
                     NewTSM = Time,
-                    % io:format("X: ~p, Y: ~p, Z: ~p, T: ~p~n", [HX, HY, HZ, Time]),
                     grdos(TO, Period, AS, [], 0, NewGestureList, Time, NewTSM, NewLastX, NewLastY, NewLastZ)
                 end;
             true ->

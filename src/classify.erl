@@ -62,10 +62,7 @@ classify_new_gesture_CSV(CSV) ->
 % For execution on the GRiSP board
 import_gesture() ->
     {_, Data} = file:read_file("sensor_fusion/lib/sensor_fusion-1.0.0/src/gesture"),
-    % io:format("State : ~p~n", [State]),
-    % io:format("Data : ~p~n", [Data]),
     Gestures = string:tokens(binary_to_list(Data), "\n"),
-    % print_list(Gestures),
 
     Cleaned_Gestures = [string:substr(G, 2, length(G)-2) || G <- Gestures],
     List_Gestures = [str_to_atom_list(G) || G <- Cleaned_Gestures],
@@ -81,7 +78,6 @@ import_gesture_CSV() ->
     io:format("State : ~p~n", [State]),
     io:format("Data : ~p~n", [Data]),
     Gestures = string:tokens(binary_to_list(Data), "\n"),
-    % print_list(Gestures),
 
     Cleaned_Gestures = [string:substr(G, 2, length(G)-2) || G <- Gestures],
     List_Gestures = [str_to_atom_list(G) || G <- Cleaned_Gestures],
@@ -100,7 +96,6 @@ compare_gesture(NewX, NewY, NewZ, List_gestures, Name, Accuracy) ->
         [H|T] ->
             % Take the 3 next list of flow, to have the 3 axis
             [GName|_] = H, % GName = Gesture Name
-            % io:format("HEAD : ~p~n", [H]),
             TriList = lists:sublist([H|T], 3),
             io:format("N : ~p~n", [GName]),
             New_Accuracy = tri_compare(NewX, NewY, NewZ, TriList),
@@ -137,12 +132,10 @@ direct_compare(New, Gesture, Okay, Comparison) ->
 
     if New == [] ->
         Total_Comp = finish_list(Gesture, 0) + Comparison,
-        % io:format("NOk : ~p, Comp : ~p~n", [Okay, Total_Comp]),
         Okay/Total_Comp;
     true ->
         if Gesture == [] ->
             Total_Comp = finish_list(New, 0) + Comparison,
-            % io:format("GOk : ~p, Comp : ~p~n", [Okay, Total_Comp]),
             Okay/Total_Comp;
         true ->
             [NH|NT] = New,
