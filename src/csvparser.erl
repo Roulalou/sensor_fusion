@@ -2,6 +2,10 @@
 
 -export([parse_CSV/2, parse/2, print_list/1]).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% API
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % CSV : "../measures/Anav3_sensor_fusion@nav_1.csv"
 % return a list of the column Index
 % For nav_3 acceleration are in 3, 4, 5
@@ -22,7 +26,6 @@ parser(CSV) ->
     {_, Data} = file:read_file(CSV),
     Rows = string:tokens(binary_to_list(Data), "\n"),
     Records = [string:tokens(Row, ",") || Row <- Rows],
-    % print_list(Records).
     Records.
 
 % Useful for debugging, print a list
@@ -31,6 +34,10 @@ print_list([H|T]) ->
     print_list(T);
 print_list([]) ->
     ok.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Internal functions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % return a list of the column Index
 clean_lines(List, Index) ->

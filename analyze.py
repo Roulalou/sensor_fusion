@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 
 # do math
 def do_math():
-    T1 = 576460619581
-    T2 = 576460751519
-    iter = 392
+    T1 = 576460741874
+    T2 = 576460720188
+    iter = 463
 
     time = T2 - T1
     av = time / iter
@@ -25,7 +25,7 @@ def plot(min, max):
     plt.legend()
     plt.show()
 
-plot(2, 5)
+# plot(2, 5)
 # plot(5, 8)
 # plot(8, 11)
 

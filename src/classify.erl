@@ -4,6 +4,10 @@
 -import(learn, [analyze/1, analyze_CSV/1, regroup/1, average/1]).
 -export([import_gesture/0, classify_new_gesture/1, classify_new_gesture_CSV/1]).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% API
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % Used by realtime.erl
 classify_new_gesture(List) ->
     List_gestures = import_gesture(),
@@ -66,6 +70,10 @@ import_gesture() ->
     Cleaned_Gestures = [string:substr(G, 2, length(G)-2) || G <- Gestures],
     List_Gestures = [str_to_atom_list(G) || G <- Cleaned_Gestures],
     List_Gestures.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Internal functions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % import the gesture file to a list of gesture
 import_gesture_CSV() ->

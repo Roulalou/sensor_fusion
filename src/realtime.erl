@@ -2,6 +2,10 @@
 
 -export([start/3]).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% API
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 start(Type, Maxtime, Period) ->
     [{_, _,StartTime,_}] = hera_data:get(nav3, sensor_fusion@nav_1),
     case Type of 
@@ -90,7 +94,7 @@ grdos(Maxtime, Period) ->
 grdos(TO, Period, AS, List, SizeL, GestureList, LastT, TSM, LastX, LastY, LastZ) ->
     [{_, _,Time, Data}] = hera_data:get(nav3, sensor_fusion@nav_1),
     if Time > Period andalso Period > 0 ->
-        io:format("~n~n~n~n~n~n"), % Just to make it more readable
+        io:format("~n~n~n"), % Just to make it more readable
         io:format("End of Timer!~nCalculating...~n"),
         classify:classify_new_gesture(GestureList);
     true ->
