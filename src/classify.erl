@@ -32,8 +32,12 @@ classify_new_gesture(List) ->
 
     {Name, Accuracy} = compare_gesture(NewX, NewY, NewZ, List_gestures),
 
-    % for the moment a simple print
-    io:format("Name : ~p, with Acc : ~p~n", [Name, Accuracy]).
+    % print the result of the classification
+    if Accuracy >= 0.5 ->
+        io:format("Name : ~p, with Acc : ~p~n", [Name, Accuracy]);
+    true ->
+        io:format("Too low Accuracy, No gesture recognized~n")
+    end.
 
 % CSV : "../measures/hc1.csv"
 classify_new_gesture_CSV(CSV) ->
@@ -74,9 +78,7 @@ import_gesture() ->
 
 % import the gesture file to a list of gesture
 import_gesture_CSV() ->
-    {State, Data} = file:read_file("gesture"),
-    io:format("State : ~p~n", [State]),
-    io:format("Data : ~p~n", [Data]),
+    {_, Data} = file:read_file("gesture"),
     Gestures = string:tokens(binary_to_list(Data), "\n"),
 
     Cleaned_Gestures = [string:substr(G, 2, length(G)-2) || G <- Gestures],
@@ -148,7 +150,7 @@ direct_compare(New, Gesture, Okay, Comparison) ->
         end
     end.
 
-% Count the number of element in a list
+% Count the number of elements in a list
 finish_list(List, N) ->
     case List of
         [] -> N;
